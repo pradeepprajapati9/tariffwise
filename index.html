@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TariffWise — US Landed Cost Calculator</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>🚢 TariffWise</h1>
+    <p class="tag">Ab US bhejne pe kitna tax + customs lagega? Turant pata karo.</p>
+    <p class="sub">29 Aug 2025 se $800 de minimis chhoot khatam — har parcel pe ab duty lagta hai.</p>
+  </header>
+
+  <main>
+    <form id="calcForm" class="panel">
+      <!-- AI / product description -->
+      <div class="field">
+        <label for="productDesc">Product kya hai? <span class="hint">(AI se HTS suggest ke liye)</span></label>
+        <div class="row">
+          <input type="text" id="productDesc" placeholder="e.g. cotton t-shirt, silver ring, ceramic mug" />
+          <button type="button" id="aiBtn" class="ghost">🤖 AI suggest</button>
+        </div>
+        <div id="aiStatus" class="status"></div>
+      </div>
+
+      <!-- Manual inputs -->
+      <div class="grid">
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category"></select>
+        </div>
+        <div class="field">
+          <label for="value">Product value (USD)</label>
+          <input type="number" id="value" min="0" step="0.01" placeholder="20" required />
+        </div>
+        <div class="field">
+          <label for="country">Kahan se bhej rahe ho? (origin)</label>
+          <select id="country"></select>
+        </div>
+        <div class="field">
+          <label for="shipMode">Shipping</label>
+          <select id="shipMode"></select>
+        </div>
+        <div class="field">
+          <label for="margin">Profit margin %</label>
+          <input type="number" id="margin" min="0" step="1" value="25" />
+        </div>
+      </div>
+
+      <button type="submit" class="primary">Calculate 🚀</button>
+    </form>
+
+    <div id="result"></div>
+
+    <!-- Gemini key (optional) -->
+    <details class="panel keybox">
+      <summary>🔑 Free Gemini API key (optional — AI HTS suggest ke liye)</summary>
+      <p class="small">
+        Free key <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
+        se lo. Key sirf tumhare browser me save hoti hai — kahin bheji nahi jaati.
+      </p>
+      <div class="row">
+        <input type="password" id="apiKey" placeholder="AIza..." />
+        <button type="button" id="saveKeyBtn" class="ghost">Save</button>
+      </div>
+      <div id="keyStatus" class="status"></div>
+    </details>
+  </main>
+
+  <footer>
+    <p>⚠️ Estimate only — customs advice nahi. Rates verify karo before shipping.</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

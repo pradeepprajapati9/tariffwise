@@ -1,0 +1,16 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Node (agar future me use ho)
+node_modules/
+npm-debug.log*
+
+# Local secrets (kabhi push mat karo)
+.env
+.env.local
+*.key
+secrets.*
