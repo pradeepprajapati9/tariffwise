@@ -1,4 +1,4 @@
-// calc.js — asli hisaab (pure functions, koi UI nahi — isliye test karna aasan)
+// calc.js — the core math (pure functions, no UI — so it is easy to test)
 
 import {
   CATEGORIES,
@@ -8,15 +8,15 @@ import {
   DE_MINIMIS_REMOVED_DATE,
 } from "./data.js";
 
-// Ek number ko $ me dikhane ke liye
+// Format a number as a USD amount
 export function money(n) {
   return "$" + (Math.round(n * 100) / 100).toFixed(2);
 }
 
-// Merchandise Processing Fee nikalo
+// Compute the Merchandise Processing Fee
 function calcMPF(value) {
   if (value < US_FEES.informalThreshold) {
-    // chhota parcel = flat informal fee
+    // small parcel = flat informal fee
     return US_FEES.mpfInformalFlat;
   }
   const raw = value * US_FEES.mpfRate;
@@ -24,13 +24,13 @@ function calcMPF(value) {
 }
 
 /**
- * Landed cost calculate karo.
+ * Calculate the total landed cost.
  * @param {Object} input
- * @param {string} input.categoryKey  - CATEGORIES ka key
- * @param {number} input.value        - product value USD me
- * @param {string} input.countryKey   - COUNTRY_EXTRA ka key
+ * @param {string} input.categoryKey  - key into CATEGORIES
+ * @param {number} input.value        - product value in USD
+ * @param {string} input.countryKey   - key into COUNTRY_EXTRA
  * @param {string} input.shipMode      - "air" | "sea"
- * @param {number} [input.marginPct]  - kitna profit % chahiye (default 25%)
+ * @param {number} [input.marginPct]  - desired profit margin % (default 25%)
  * @returns {Object} breakdown
  */
 export function calculateLandedCost(input) {
@@ -56,13 +56,13 @@ export function calculateLandedCost(input) {
   const mpf = calcMPF(val);
   const hmf = mode.hmf ? val * US_FEES.hmfRate : 0;
 
-  // Total customs/duty side
+  // Total on the customs/duty side
   const totalDutyFees = duty + mpf + hmf;
 
-  // Landed cost = product value + saare import charges
+  // Landed cost = product value + all import charges
   const landedCost = val + totalDutyFees;
 
-  // Suggested selling price = landed cost + margin
+  // Recommended selling price = landed cost + margin
   const margin = Number(marginPct) || 0;
   const suggestedPrice = landedCost * (1 + margin / 100);
 
@@ -91,7 +91,7 @@ export function calculateLandedCost(input) {
 
     // context
     deMinimisRemoved: DE_MINIMIS_REMOVED_DATE,
-    // "pehle kitna bachta tha" — de minimis ke pehle chhote parcel pe $0 lagta tha
+    // Before the de minimis change, a sub-$800 parcel entered duty-free ($0).
     savingsLostVsOldRule: val < 800 ? totalDutyFees : 0,
   };
 }

@@ -5,11 +5,11 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Node (agar future me use ho)
+# Node (in case it is used in the future)
 node_modules/
 npm-debug.log*
 
-# Local secrets (kabhi push mat karo)
+# Local secrets (never commit these)
 .env
 .env.local
 *.key

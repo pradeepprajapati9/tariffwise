@@ -1,12 +1,13 @@
-// gemini.js — optional AI se HTS code + category suggest karna
+// gemini.js — optional AI classification of the product's HTS code + category.
 //
-// User apni FREE Gemini API key daale (aistudio.google.com se milti hai).
-// Key na ho to app phir bhi chalta hai (manual category se) — AI sirf helper hai.
-// Key browser me localStorage me rehti hai, kahin bhejī nahi jaati (server nahi hai).
+// The user supplies their own FREE Gemini API key (from aistudio.google.com).
+// Without a key the app still works fully via manual category selection — the
+// AI is only a convenience. The key is stored in the browser's localStorage and
+// is never sent to any server of ours (there is no server).
 
 import { CATEGORIES } from "./data.js";
 
-const MODEL = "gemini-2.0-flash"; // free tier, tez
+const MODEL = "gemini-2.0-flash"; // free tier, fast
 const KEY_STORE = "tariffwise_gemini_key";
 
 export function saveApiKey(key) {
@@ -19,15 +20,15 @@ export function getApiKey() {
 }
 
 /**
- * Product ke description se best category key + HTS code suggest karo.
- * @param {string} description - user ne jo product likha
+ * Suggest the best category key + HTS code from a product description.
+ * @param {string} description - the product text the user entered
  * @returns {Promise<{categoryKey:string, hts:string, reason:string}>}
  */
 export async function suggestCategory(description) {
   const key = getApiKey();
   if (!key) throw new Error("no-key");
 
-  // AI ko sirf hamari valid categories me se chunne do (galat category na de)
+  // Constrain the model to our known categories so it can't invent one.
   const options = Object.entries(CATEGORIES)
     .map(([k, v]) => `${k}: ${v.label} (HTS ${v.hts})`)
     .join("\n");
@@ -64,13 +65,13 @@ Reply ONLY as compact JSON, no markdown:
   const text =
     json?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 
-  // JSON nikalo (kabhi kabhi AI ```json wrap kar deta hai)
+  // Extract the JSON object (the model sometimes wraps it in ```json fences).
   const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error("AI ne saaf jawab nahi diya: " + text.slice(0, 100));
+  if (!match) throw new Error("could not read the AI response: " + text.slice(0, 100));
 
   const parsed = JSON.parse(match[0]);
 
-  // Safety: agar AI ne galat key di to "other" pe fallback
+  // Safety: if the model returned an unknown key, fall back to "other".
   if (!CATEGORIES[parsed.categoryKey]) {
     parsed.categoryKey = "other";
     parsed.hts = CATEGORIES.other.hts;

@@ -1,10 +1,10 @@
-// app.js — form ko calculation + AI se jodता hai (UI wiring)
+// app.js — wires the form to the calculation + AI (UI logic)
 
 import { CATEGORIES, COUNTRY_EXTRA, SHIP_MODES } from "./data.js";
 import { calculateLandedCost, money } from "./calc.js";
 import { suggestCategory, saveApiKey, getApiKey } from "./gemini.js";
 
-// --- Dropdowns ko data.js se bharo (taaki ek hi jagah update ho) ---
+// --- Populate dropdowns from data.js (single source of truth) ---
 function fillSelect(el, obj, valueLabel = (v) => v.label) {
   el.innerHTML = "";
   for (const [key, v] of Object.entries(obj)) {
@@ -21,9 +21,9 @@ function init() {
   fillSelect($("category"), CATEGORIES);
   fillSelect($("country"), COUNTRY_EXTRA);
   fillSelect($("shipMode"), SHIP_MODES);
-  $("country").value = "CN"; // sabse common origin
+  $("country").value = "CN"; // most common origin
 
-  // Saved API key dikhao
+  // Show any saved API key
   $("apiKey").value = getApiKey();
 
   $("calcForm").addEventListener("submit", onCalculate);
@@ -33,33 +33,33 @@ function init() {
 
 function onSaveKey() {
   saveApiKey($("apiKey").value);
-  flash($("keyStatus"), "✅ Key save ho gayi (sirf tumhare browser me)");
+  flash($("keyStatus"), "API key saved in this browser only.");
 }
 
 async function onAiSuggest() {
   const desc = $("productDesc").value.trim();
   if (!desc) {
-    flash($("aiStatus"), "⚠️ Pehle product ka naam/description likho", true);
+    flash($("aiStatus"), "Enter a product name or description first.", true);
     return;
   }
   if (!getApiKey()) {
-    flash($("aiStatus"), "⚠️ Pehle apni free Gemini key daalo (upar)", true);
+    flash($("aiStatus"), "Add your free Gemini API key below to use AI classification.", true);
     return;
   }
   $("aiBtn").disabled = true;
-  flash($("aiStatus"), "🤖 AI soch raha hai...");
+  flash($("aiStatus"), "Classifying product…");
   try {
     const s = await suggestCategory(desc);
     $("category").value = s.categoryKey;
     flash(
       $("aiStatus"),
-      `✅ AI: ${CATEGORIES[s.categoryKey].label} — HTS ${s.hts} (${s.reason})`
+      `Suggested: ${CATEGORIES[s.categoryKey].label} — HTS ${s.hts} (${s.reason})`
     );
   } catch (e) {
     const msg =
       e.message === "no-key"
-        ? "⚠️ Gemini key nahi mili"
-        : "❌ " + e.message;
+        ? "No Gemini API key found."
+        : "AI classification failed: " + e.message;
     flash($("aiStatus"), msg, true);
   } finally {
     $("aiBtn").disabled = false;
@@ -70,7 +70,7 @@ function onCalculate(e) {
   e.preventDefault();
   const value = parseFloat($("value").value);
   if (!value || value <= 0) {
-    flash($("aiStatus"), "⚠️ Sahi product value ($) daalo", true);
+    flash($("aiStatus"), "Enter a valid product value in USD.", true);
     return;
   }
 
@@ -91,37 +91,39 @@ function pct(n) {
 
 function renderResult(r) {
   const box = $("result");
-  const lostLine =
+  const notice =
     r.savingsLostVsOldRule > 0
-      ? `<div class="alert">🚨 29 Aug 2025 se pehle is parcel pe <b>$0</b> lagta tha
-         (de minimis chhoot). Ab lagega <b>${money(r.savingsLostVsOldRule)}</b>.</div>`
+      ? `<div class="alert">Before 29 August 2025, this shipment qualified for
+         duty-free entry under the $800 de minimis exemption. That exemption has
+         ended, so an estimated <strong>${money(r.savingsLostVsOldRule)}</strong>
+         in duty and fees now applies.</div>`
       : "";
 
   box.innerHTML = `
-    ${lostLine}
-    <div class="card">
+    ${notice}
+    <div class="result-card">
       <table class="breakdown">
-        <tr><td>📦 Product value</td><td>${money(r.productValue)}</td></tr>
-        <tr><td>🏷️ HTS code</td><td>${r.htsCode}</td></tr>
-        <tr><td>📂 Category</td><td>${r.category}</td></tr>
-        <tr><td>🌍 Origin</td><td>${r.country}</td></tr>
+        <tr><td>Product value</td><td>${money(r.productValue)}</td></tr>
+        <tr><td>HTS code</td><td>${r.htsCode}</td></tr>
+        <tr><td>Category</td><td>${r.category}</td></tr>
+        <tr><td>Country of origin</td><td>${r.country}</td></tr>
         <tr class="sub"><td>Base duty (category)</td><td>${pct(r.baseDutyRate)}</td></tr>
-        <tr class="sub"><td>Country extra tariff</td><td>${pct(r.countryExtraRate)}</td></tr>
-        <tr><td>💰 Total duty (${pct(r.totalDutyRate)})</td><td>${money(r.duty)}</td></tr>
-        <tr><td>🧾 Customs MPF fee</td><td>${money(r.mpf)}</td></tr>
-        ${r.hmf > 0 ? `<tr><td>🚢 Harbor fee (HMF)</td><td>${money(r.hmf)}</td></tr>` : ""}
-        <tr class="total"><td>✅ Total landed cost</td><td>${money(r.landedCost)}</td></tr>
-        <tr class="price"><td>💡 Suggested price (+${r.marginPct}%)</td><td>${money(r.suggestedPrice)}</td></tr>
+        <tr class="sub"><td>Country tariff</td><td>${pct(r.countryExtraRate)}</td></tr>
+        <tr><td>Total duty (${pct(r.totalDutyRate)})</td><td>${money(r.duty)}</td></tr>
+        <tr><td>Merchandise Processing Fee (MPF)</td><td>${money(r.mpf)}</td></tr>
+        ${r.hmf > 0 ? `<tr><td>Harbor Maintenance Fee (HMF)</td><td>${money(r.hmf)}</td></tr>` : ""}
+        <tr class="total"><td>Total landed cost</td><td>${money(r.landedCost)}</td></tr>
+        <tr class="price"><td>Recommended price (+${r.marginPct}% margin)</td><td>${money(r.suggestedPrice)}</td></tr>
       </table>
       <p class="note">${r.countryNote}</p>
     </div>
-    <p class="disclaimer">⚠️ Ye ek <b>estimate</b> hai, legal/customs advice nahi.
-    Asli rate exact HTS code aur latest trade rules pe depend karta hai.</p>
+    <p class="disclaimer">Estimate only — not customs or legal advice. Actual duty
+    depends on the exact HTS code and current trade rules.</p>
   `;
   box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-// Chhota status message dikhane ka helper
+// Small helper to show a status message
 function flash(el, msg, isError = false) {
   el.textContent = msg;
   el.className = "status" + (isError ? " err" : " ok");

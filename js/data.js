@@ -1,48 +1,48 @@
-// data.js — TariffWise ke saare numbers ek jagah (isliye update karna aasan)
+// data.js — all of TariffWise's constants in one place (easy to update).
 //
-// ⚠️ HONEST DISCLAIMER: Ye rates "estimate" ke liye hain, legal advice nahi.
-// Asli tariff har product ke exact HTS code, trade deals aur roz badalte rules
-// pe depend karta hai. Yahan common categories ke typical rates rakhe hain.
-// Source dates neeche diye hain — build ke waqt inhe verify/update karna.
+// IMPORTANT DISCLAIMER: These rates are for ESTIMATION only, not legal advice.
+// Actual tariffs depend on each product's exact HTS code, trade deals, and rules
+// that change frequently. The values below are typical rates for common
+// categories. Verify/update them against the sources before public launch.
 //
 // Sources:
 //  - USITC HTS (hts.usitc.gov) — MFN base duty rates
 //  - US CBP — de minimis $800 exemption REMOVED effective 29 Aug 2025
 //  - Section 301 (China) + 2025 country/reciprocal tariffs (verify latest before launch)
 
-// De minimis khatam hone ki date — pehle iske neeche parcels tax-free the
+// Date the de minimis exemption ended — below this, parcels were previously duty-free.
 export const DE_MINIMIS_REMOVED_DATE = "2025-08-29";
 
-// US customs ke fixed fees (2025 approx — verify before launch)
+// Fixed US customs fees (2025 approx — verify before launch)
 export const US_FEES = {
-  // Merchandise Processing Fee: value ka 0.3464%, min ~$32.71 max ~$634.62 (formal entry)
+  // Merchandise Processing Fee: 0.3464% of value, min ~$32.71 max ~$634.62 (formal entry)
   mpfRate: 0.003464,
   mpfMin: 32.71,
   mpfMax: 634.62,
-  // Informal entry (chhote parcels, ~< $2500) ke liye flat MPF
+  // Flat MPF for informal entries (small parcels, ~< $2500)
   mpfInformalFlat: 2.62,
   informalThreshold: 2500,
-  // Harbor Maintenance Fee: sirf ocean/sea freight pe (0.125%)
+  // Harbor Maintenance Fee: applies only to ocean/sea freight (0.125%)
   hmfRate: 0.00125,
-  // Customs broker ka rough estimate (agar broker use kare)
+  // Rough customs-broker estimate (if a broker is used)
   brokerEstimate: 15.0,
 };
 
-// Category → HTS code + typical MFN (base) duty rate
-// Ye wo categories hain jahan sabse zyada chhote sellers hain (Etsy/eBay/Shopify)
+// Category → HTS code + typical MFN (base) duty rate.
+// These are the categories where most small sellers operate (Etsy/eBay/Shopify).
 export const CATEGORIES = {
   clothing_knit: {
-    label: "Kapde — knit (t-shirt, sweater)",
+    label: "Apparel — knit (t-shirt, sweater)",
     hts: "6109.10",
     baseDuty: 0.165, // ~16.5% typical apparel
   },
   clothing_woven: {
-    label: "Kapde — woven (shirt, dress)",
+    label: "Apparel — woven (shirt, dress)",
     hts: "6206.30",
     baseDuty: 0.155,
   },
   jewelry: {
-    label: "Jewelry / imitation gehne",
+    label: "Jewelry — imitation / costume",
     hts: "7117.90",
     baseDuty: 0.11,
   },
@@ -52,12 +52,12 @@ export const CATEGORIES = {
     baseDuty: 0.05,
   },
   leather_bags: {
-    label: "Bags / purse (leather)",
+    label: "Bags & purses (leather)",
     hts: "4202.21",
     baseDuty: 0.09,
   },
   footwear: {
-    label: "Shoes / footwear",
+    label: "Footwear / shoes",
     hts: "6403.99",
     baseDuty: 0.10,
   },
@@ -72,17 +72,17 @@ export const CATEGORIES = {
     baseDuty: 0.0, // often free
   },
   ceramics: {
-    label: "Ceramic / pottery / mugs",
+    label: "Ceramics / pottery / mugs",
     hts: "6912.00",
     baseDuty: 0.095,
   },
   toys: {
-    label: "Toys / games",
+    label: "Toys & games",
     hts: "9503.00",
     baseDuty: 0.0, // most toys free
   },
   electronics_acc: {
-    label: "Electronics accessory (cable, case)",
+    label: "Electronics accessories (cable, case)",
     hts: "8517.62",
     baseDuty: 0.0,
   },
@@ -92,39 +92,39 @@ export const CATEGORIES = {
     baseDuty: 0.0,
   },
   stationery: {
-    label: "Stationery / paper / art print",
+    label: "Stationery / paper / art prints",
     hts: "4911.91",
     baseDuty: 0.0,
   },
   textiles_home: {
-    label: "Home textile (blanket, cushion)",
+    label: "Home textiles (blanket, cushion)",
     hts: "6304.91",
     baseDuty: 0.058,
   },
   other: {
-    label: "Other / pata nahi",
+    label: "Other / not sure",
     hts: "9999.00",
     baseDuty: 0.05, // safe average estimate
   },
 };
 
-// Country of origin → additional tariff (base duty ke UPAR extra)
-// ⚠️ 2025 ke tariffs tezi se badalte hain — launch se pehle latest verify karo.
-// Ye extra %, category ke base duty me ADD hota hai (approx representative values).
+// Country of origin → additional tariff (added ON TOP of the base duty).
+// NOTE: 2025 tariffs change rapidly — verify the latest rates before launch.
+// This extra % is ADDED to the category's base duty (approx representative values).
 export const COUNTRY_EXTRA = {
-  CN: { label: "China", extra: 0.30, note: "Section 301 + 2025 tariffs (high, verify latest)" },
-  IN: { label: "India", extra: 0.10, note: "2025 reciprocal tariff estimate" },
-  VN: { label: "Vietnam", extra: 0.20, note: "2025 tariff estimate" },
-  BD: { label: "Bangladesh", extra: 0.15, note: "2025 tariff estimate" },
-  TR: { label: "Turkey", extra: 0.10, note: "estimate" },
-  MX: { label: "Mexico", extra: 0.0, note: "USMCA — often duty-free (rules apply)" },
-  CA: { label: "Canada", extra: 0.0, note: "USMCA — often duty-free (rules apply)" },
-  GB: { label: "UK", extra: 0.10, note: "estimate" },
-  EU: { label: "EU (Germany/France/etc)", extra: 0.10, note: "2025 tariff estimate" },
-  other: { label: "Other country", extra: 0.10, note: "safe average estimate" },
+  CN: { label: "China", extra: 0.30, note: "Includes Section 301 and 2025 tariff measures." },
+  IN: { label: "India", extra: 0.10, note: "Reflects 2025 reciprocal tariff measures." },
+  VN: { label: "Vietnam", extra: 0.20, note: "Reflects 2025 tariff measures." },
+  BD: { label: "Bangladesh", extra: 0.15, note: "Reflects 2025 tariff measures." },
+  TR: { label: "Turkey", extra: 0.10, note: "Estimated tariff rate." },
+  MX: { label: "Mexico", extra: 0.0, note: "Often duty-free under USMCA (rules of origin apply)." },
+  CA: { label: "Canada", extra: 0.0, note: "Often duty-free under USMCA (rules of origin apply)." },
+  GB: { label: "United Kingdom", extra: 0.10, note: "Estimated tariff rate." },
+  EU: { label: "European Union", extra: 0.10, note: "Reflects 2025 tariff measures." },
+  other: { label: "Other country", extra: 0.10, note: "Uses a conservative average estimate." },
 };
 
-// Shipping mode — HMF sirf sea pe lagta hai
+// Shipping mode — HMF applies only to sea freight
 export const SHIP_MODES = {
   air: { label: "Air / courier (DHL, FedEx)", hmf: false },
   sea: { label: "Sea / ocean freight", hmf: true },

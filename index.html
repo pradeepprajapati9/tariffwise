@@ -3,24 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TariffWise — US Landed Cost Calculator</title>
+  <title>TariffWise — US Import Landed-Cost Calculator for Online Sellers</title>
+  <meta name="description" content="Free calculator for online sellers. Estimate US import duty, customs fees, total landed cost, and a recommended selling price after the end of the $800 de minimis exemption." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚢</text></svg>" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="hero">
-    <h1>🚢 TariffWise</h1>
-    <p class="tag">Ab US bhejne pe kitna tax + customs lagega? Turant pata karo.</p>
-    <p class="sub">29 Aug 2025 se $800 de minimis chhoot khatam — har parcel pe ab duty lagta hai.</p>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark">🚢</span>
+        <span class="brand-name">Tariff<span>Wise</span></span>
+      </div>
+      <span class="badge-free">Free tool</span>
+    </div>
   </header>
 
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <h1>Know your true cost of selling to the USA</h1>
+    <p class="hero-sub">
+      Estimate US import duty, customs fees, total landed cost and a recommended
+      selling price — in seconds.
+    </p>
+    <p class="hero-note">
+      Since <strong>29 August 2025</strong>, the $800 de minimis exemption has ended.
+      Almost every parcel to the US now carries duty &amp; customs fees.
+    </p>
+  </section>
+
   <main>
-    <form id="calcForm" class="panel">
-      <!-- AI / product description -->
+    <!-- ===== Calculator ===== -->
+    <form id="calcForm" class="card form-card">
+      <div class="card-head">
+        <h2>Landed-cost calculator</h2>
+        <p class="card-desc">Enter your product details to see the full breakdown.</p>
+      </div>
+
+      <!-- AI product description -->
       <div class="field">
-        <label for="productDesc">Product kya hai? <span class="hint">(AI se HTS suggest ke liye)</span></label>
+        <label for="productDesc">
+          What is the product?
+          <span class="hint">Used for AI HTS-code suggestion</span>
+        </label>
         <div class="row">
-          <input type="text" id="productDesc" placeholder="e.g. cotton t-shirt, silver ring, ceramic mug" />
-          <button type="button" id="aiBtn" class="ghost">🤖 AI suggest</button>
+          <input type="text" id="productDesc"
+                 placeholder="e.g. cotton t-shirt, silver ring, ceramic mug" />
+          <button type="button" id="aiBtn" class="btn ghost">🤖 AI suggest</button>
         </div>
         <div id="aiStatus" class="status"></div>
       </div>
@@ -36,41 +66,46 @@
           <input type="number" id="value" min="0" step="0.01" placeholder="20" required />
         </div>
         <div class="field">
-          <label for="country">Kahan se bhej rahe ho? (origin)</label>
+          <label for="country">Country of origin</label>
           <select id="country"></select>
         </div>
         <div class="field">
-          <label for="shipMode">Shipping</label>
+          <label for="shipMode">Shipping method</label>
           <select id="shipMode"></select>
         </div>
         <div class="field">
-          <label for="margin">Profit margin %</label>
+          <label for="margin">Desired profit margin (%)</label>
           <input type="number" id="margin" min="0" step="1" value="25" />
         </div>
       </div>
 
-      <button type="submit" class="primary">Calculate 🚀</button>
+      <button type="submit" class="btn primary">Calculate landed cost</button>
     </form>
 
+    <!-- ===== Result ===== -->
     <div id="result"></div>
 
-    <!-- Gemini key (optional) -->
-    <details class="panel keybox">
-      <summary>🔑 Free Gemini API key (optional — AI HTS suggest ke liye)</summary>
+    <!-- ===== Optional Gemini key ===== -->
+    <details class="card keybox">
+      <summary>🔑 Optional: add a free Gemini API key for AI classification</summary>
       <p class="small">
-        Free key <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
-        se lo. Key sirf tumhare browser me save hoti hai — kahin bheji nahi jaati.
+        Get a free key from
+        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.
+        Your key is stored only in this browser — it is never sent to our servers
+        (there is no server).
       </p>
       <div class="row">
         <input type="password" id="apiKey" placeholder="AIza..." />
-        <button type="button" id="saveKeyBtn" class="ghost">Save</button>
+        <button type="button" id="saveKeyBtn" class="btn ghost">Save key</button>
       </div>
       <div id="keyStatus" class="status"></div>
     </details>
   </main>
 
-  <footer>
-    <p>⚠️ Estimate only — customs advice nahi. Rates verify karo before shipping.</p>
+  <footer class="site-footer">
+    <p><strong>Estimates only — not customs or legal advice.</strong>
+       Actual duty depends on the exact HTS code and current trade rules. Verify rates before shipping.</p>
+    <p class="copyright">© 2026 TariffWise</p>
   </footer>
 
   <script type="module" src="js/app.js"></script>
