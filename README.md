@@ -1,53 +1,62 @@
-# 🚢 TariffWise — US Landed-Cost Calculator
+# TariffWise — US Landed-Cost Calculator
 
-Sellers ke liye free tool: **"America bhejne pe ab kitna tax + customs lagega?"** — turant estimate.
+A free tool for online sellers to estimate the **total cost of shipping a product to the USA** — duty, customs fees, landed cost, and a suggested selling price — in seconds.
 
-## Kyun (Why now)
-29 August 2025 se US ne **$800 de minimis** chhoot khatam kar di. Pehle chhote parcels
-(< $800) pe koi duty nahi lagta tha — ab har parcel pe tariff + customs lagta hai.
-Duniya bhar ke chhote sellers (Etsy/eBay/Shopify/dropshippers) pareshan hain, aur is
-problem ka abhi koi free tool nahi. Ye whitespace hai.
+**Live:** https://pradeepprajapati9.github.io/tariffwise/
 
-## Kya karta hai
-- Product ki value + category + origin country daalo
-- Turant dikhata hai: **duty + customs fees + total landed cost + suggested price**
-- Optional: apni **free Gemini key** daal ke AI se HTS code suggest karwao
+## Why it matters
 
-## Chalane ka tarika (MVP — web app)
-XAMPP already chal raha hai, toh browser me kholo:
+On **29 August 2025**, the US ended the **$800 de minimis exemption**. Previously, low-value parcels (under $800) entered duty-free. Now every parcel is subject to tariffs and customs fees. This directly affects small sellers on Etsy, eBay, Shopify, and dropshipping platforms — many of whom have no easy way to calculate their new costs. TariffWise fills that gap.
+
+## Features
+
+- Enter product value, category, and country of origin to instantly see duty, customs fees, total landed cost, and a suggested price.
+- Optional AI classification: add a free Gemini API key to auto-suggest the HTS code from a product description.
+- No login or account connection required — open and use.
+- All calculation constants live in a single file (`js/data.js`) for easy updates.
+
+## Running locally
+
+The app uses native ES modules, so it must be served over HTTP (not opened via `file://`):
 
 ```
 http://localhost/pr/tariffwise/
 ```
 
-> ⚠️ Note: ye ES modules use karta hai — `file://` se seedha open mat karo,
-> localhost (http) se hi kholo (XAMPP se apne aap ho jayega).
+Any static server works (XAMPP, `python -m http.server`, etc.).
 
-## Test
-Calculation logic ka test:
-```bash
+## Testing
+
+Run the calculation logic tests:
+
+```
 node test_calc.mjs
 ```
 
-## Files
-| File | Kaam |
-|------|------|
+## Project structure
+
+| File | Purpose |
+|------|---------|
 | `index.html` | UI |
-| `css/style.css` | styling |
-| `js/data.js` | HTS categories + country tariff rates + fees (**yahan rates update karo**) |
-| `js/calc.js` | calculation logic (pure functions) |
-| `js/gemini.js` | optional AI HTS suggest |
+| `css/style.css` | Styling |
+| `js/data.js` | HTS categories, country tariff rates, and fee constants |
+| `js/calc.js` | Calculation logic (pure functions) |
+| `js/gemini.js` | Optional AI HTS classification |
 | `js/app.js` | UI wiring |
-| `test_calc.mjs` | calc logic test |
+| `test_calc.mjs` | Calculation tests |
 
-## ⚠️ Honest disclaimer
-Ye **estimate** tool hai, legal/customs advice nahi. Asli tariff har product ke exact
-HTS code aur roz-badalte 2025 trade rules pe depend karta hai. `js/data.js` ke rates
-**launch se pehle verify/update** karo (sources: USITC HTS, US CBP, Federal Register).
+## Disclaimer
 
-## Aage (Phase 2 — jab users aayein)
-- [ ] Etsy/eBay/Amazon page pe auto-detect (Chrome extension)
-- [ ] History save (Supabase login)
-- [ ] Multi-country (EU/UK bhi, sirf US nahi)
-- [ ] Master Bot me module banao
-- [ ] Affiliate links (shipping tools, Shopify) — monetization
+This tool provides **estimates only** — not legal or customs advice. Actual tariffs depend on a product's exact HTS code and current trade rules, which change frequently. Verify the rates in `js/data.js` against official sources (USITC HTS, US CBP, Federal Register) before relying on them.
+
+## Roadmap
+
+- [ ] Replace estimated rates with official USITC HTS data
+- [ ] Browser extension with auto-detection on Etsy / eBay / Amazon listings
+- [ ] Saved history via Supabase login
+- [ ] Multi-country support (EU, UK)
+- [ ] Affiliate integrations (shipping tools, Shopify)
+
+## License
+
+MIT — see [LICENSE](LICENSE).
