@@ -22,3 +22,15 @@ export const BUILTIN_GEMINI_KEY = "";
 // Master switch for the AI feature. Set to false to fully disable AI
 // (the tool still works via the manual category dropdown).
 export const AI_ENABLED = true;
+
+// ==========================================================================
+//  Monetization — Amazon Associates affiliate link (set once, works forever)
+// ==========================================================================
+// Your Amazon Associates tag. Change this one value to re-point all earnings.
+export const AMAZON_TAG = "tariffwise-20";
+
+// The result CTA links here. It's an Amazon search for shipping/packing
+// supplies that sellers actually buy, tagged with your Associate ID so any
+// qualifying purchase earns a commission. Edit the search terms if you like.
+export const AFFILIATE_URL =
+  `https://www.amazon.com/s?k=shipping+boxes+packing+supplies+tape&tag=${AMAZON_TAG}`;

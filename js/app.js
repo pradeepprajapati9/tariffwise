@@ -4,7 +4,7 @@ import { CATEGORIES, COUNTRY_EXTRA, SHIP_MODES } from "./data.js";
 import { calculateLandedCost, money } from "./calc.js";
 import { suggestCategory, saveApiKey, getApiKey } from "./gemini.js";
 import { matchCategory } from "./matcher.js";
-import { AI_ENABLED } from "./config.js";
+import { AI_ENABLED, AFFILIATE_URL } from "./config.js";
 
 // --- Populate dropdowns from data.js (single source of truth) ---
 function fillSelect(el, obj, valueLabel = (v) => v.label) {
@@ -148,14 +148,15 @@ function renderResult(r, isExample = false) {
       </div>
     </div>
 
-    <!-- Money slot: helps the seller act on the result AND earns affiliate income -->
-    <a class="cta-card" href="#" data-affiliate="shipping" target="_blank" rel="noopener nofollow">
-      <span class="cta-icon">🚚</span>
+    <!-- Money slot: relevant Amazon products for sellers, tagged for affiliate income -->
+    <a class="cta-card" href="${AFFILIATE_URL}" target="_blank" rel="noopener nofollow sponsored">
+      <span class="cta-icon">📦</span>
       <span class="cta-text">
-        <strong>Pay less on US shipping &amp; customs</strong>
-        <span>Compare discounted couriers and customs brokers →</span>
+        <strong>Stock up on shipping &amp; packing supplies</strong>
+        <span>Boxes, mailers, tape &amp; scales on Amazon →</span>
       </span>
     </a>
+    <p class="affiliate-note">As an Amazon Associate, we earn from qualifying purchases.</p>
 
     <details class="result-card breakdown-box">
       <summary>See how this is calculated</summary>
