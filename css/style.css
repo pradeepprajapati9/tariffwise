@@ -307,6 +307,29 @@ input:focus, select:focus {
 .small { color: var(--muted); font-size: .82rem; }
 .small a { color: var(--primary); }
 
+/* ===== SEO / info content ===== */
+.info {
+  max-width: 720px;
+  margin: .5rem auto 0;
+  padding: .5rem 0 1rem;
+}
+.info h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin: 1.6rem 0 .5rem;
+}
+.info p { color: var(--muted); margin: 0 0 .6rem; }
+.info p strong { color: var(--text); }
+.info .how { color: var(--muted); padding-left: 1.2rem; margin: 0 0 .6rem; }
+.info .how li { margin-bottom: .35rem; }
+.faq {
+  border-bottom: 1px solid var(--border);
+  padding: .75rem 0;
+}
+.faq summary { cursor: pointer; font-weight: 600; font-size: .95rem; }
+.faq p { margin: .5rem 0 0; font-size: .9rem; }
+
 /* ===== Footer ===== */
 .site-footer {
   max-width: 720px;
