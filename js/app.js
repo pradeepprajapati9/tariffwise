@@ -1,6 +1,6 @@
 // app.js — wires the form to the calculation + AI (UI logic)
 
-import { CATEGORIES, COUNTRY_EXTRA, SHIP_MODES } from "./data.js";
+import { CATEGORIES, COUNTRY_EXTRA, SHIP_MODES, RATES_AS_OF } from "./data.js";
 import { calculateLandedCost, money } from "./calc.js";
 import { suggestCategory, saveApiKey, getApiKey } from "./gemini.js";
 import { matchCategory } from "./matcher.js";
@@ -176,7 +176,7 @@ function renderResult(r, isExample = false) {
     </details>
 
     <p class="disclaimer">Estimate only — not customs or legal advice. Actual duty
-    depends on the exact HTS code and current trade rules.</p>
+    depends on the exact HTS code and current trade rules. Rates reviewed ${RATES_AS_OF}.</p>
   `;
   if (!isExample) box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }

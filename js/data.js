@@ -5,10 +5,17 @@
 // that change frequently. The values below are typical rates for common
 // categories. Verify/update them against the sources before public launch.
 //
-// Sources:
+// Sources (last reviewed July 2026):
 //  - USITC HTS (hts.usitc.gov) — MFN base duty rates
-//  - US CBP — de minimis $800 exemption REMOVED effective 29 Aug 2025
-//  - Section 301 (China) + 2025 country/reciprocal tariffs (verify latest before launch)
+//  - US CBP / Federal Register — de minimis $800 exemption ended 29 Aug 2025;
+//    indefinitely suspended for all modes by interim final rules (Jun/Jul 2026).
+//  - Feb 20 2026: Supreme Court struck down IEEPA "reciprocal" country tariffs.
+//    Replaced by a flat ~10% Section 122 baseline on nearly all imports.
+//    China still carries Section 301 (~25%), so ~35% total above MFN.
+//  NOTE: country tariffs change often — re-check the sources periodically.
+
+// When these tariff figures were last reviewed (shown to users for transparency).
+export const RATES_AS_OF = "July 2026";
 
 // Date the de minimis exemption ended — below this, parcels were previously duty-free.
 export const DE_MINIMIS_REMOVED_DATE = "2025-08-29";
@@ -109,19 +116,21 @@ export const CATEGORIES = {
 };
 
 // Country of origin → additional tariff (added ON TOP of the base duty).
-// NOTE: 2025 tariffs change rapidly — verify the latest rates before launch.
-// This extra % is ADDED to the category's base duty (approx representative values).
+// Reflects the post-Feb-2026 landscape: a flat ~10% Section 122 baseline on
+// nearly all imports (the IEEPA "reciprocal" country tariffs were struck down
+// on 20 Feb 2026), with China still carrying Section 301 on top.
+// NOTE: these change often — re-verify against the sources periodically.
 export const COUNTRY_EXTRA = {
-  CN: { label: "China", extra: 0.30, note: "Includes Section 301 and 2025 tariff measures." },
-  IN: { label: "India", extra: 0.10, note: "Reflects 2025 reciprocal tariff measures." },
-  VN: { label: "Vietnam", extra: 0.20, note: "Reflects 2025 tariff measures." },
-  BD: { label: "Bangladesh", extra: 0.15, note: "Reflects 2025 tariff measures." },
-  TR: { label: "Turkey", extra: 0.10, note: "Estimated tariff rate." },
-  MX: { label: "Mexico", extra: 0.0, note: "Often duty-free under USMCA (rules of origin apply)." },
-  CA: { label: "Canada", extra: 0.0, note: "Often duty-free under USMCA (rules of origin apply)." },
-  GB: { label: "United Kingdom", extra: 0.10, note: "Estimated tariff rate." },
-  EU: { label: "European Union", extra: 0.10, note: "Reflects 2025 tariff measures." },
-  other: { label: "Other country", extra: 0.10, note: "Uses a conservative average estimate." },
+  CN: { label: "China", extra: 0.35, note: "10% Section 122 baseline + ~25% Section 301 (some goods far higher)." },
+  IN: { label: "India", extra: 0.10, note: "10% Section 122 baseline (reciprocal tariff struck down Feb 2026)." },
+  VN: { label: "Vietnam", extra: 0.10, note: "10% Section 122 baseline (was ~46% reciprocal, struck down Feb 2026)." },
+  BD: { label: "Bangladesh", extra: 0.10, note: "10% Section 122 baseline." },
+  TR: { label: "Turkey", extra: 0.10, note: "10% Section 122 baseline." },
+  MX: { label: "Mexico", extra: 0.0, note: "USMCA-qualified goods usually duty-free; otherwise 10% baseline." },
+  CA: { label: "Canada", extra: 0.0, note: "USMCA-qualified goods usually duty-free; otherwise 10% baseline." },
+  GB: { label: "United Kingdom", extra: 0.10, note: "10% Section 122 baseline." },
+  EU: { label: "European Union", extra: 0.10, note: "10% Section 122 baseline (was 20% reciprocal, struck down Feb 2026)." },
+  other: { label: "Other country", extra: 0.10, note: "10% Section 122 baseline (applies to most countries)." },
 };
 
 // Shipping mode — HMF applies only to sea freight
