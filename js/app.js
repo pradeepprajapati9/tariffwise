@@ -3,6 +3,7 @@
 import { CATEGORIES, COUNTRY_EXTRA, SHIP_MODES } from "./data.js";
 import { calculateLandedCost, money } from "./calc.js";
 import { suggestCategory, saveApiKey, getApiKey } from "./gemini.js";
+import { AI_ENABLED } from "./config.js";
 
 // --- Populate dropdowns from data.js (single source of truth) ---
 function fillSelect(el, obj, valueLabel = (v) => v.label) {
@@ -23,12 +24,18 @@ function init() {
   fillSelect($("shipMode"), SHIP_MODES);
   $("country").value = "CN"; // most common origin
 
-  // Show any saved API key
-  $("apiKey").value = getApiKey();
-
   $("calcForm").addEventListener("submit", onCalculate);
-  $("aiBtn").addEventListener("click", onAiSuggest);
-  $("saveKeyBtn").addEventListener("click", onSaveKey);
+
+  if (AI_ENABLED) {
+    $("aiBtn").addEventListener("click", onAiSuggest);
+    $("saveKeyBtn").addEventListener("click", onSaveKey);
+    // Show the user's own saved key (not the built-in demo key)
+    $("apiKey").value = localStorage.getItem("tariffwise_gemini_key") || "";
+  } else {
+    // AI disabled: hide the AI button and the optional key box entirely
+    $("aiBtn").style.display = "none";
+    document.querySelector(".keybox").style.display = "none";
+  }
 }
 
 function onSaveKey() {

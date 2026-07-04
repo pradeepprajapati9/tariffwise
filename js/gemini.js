@@ -6,6 +6,7 @@
 // is never sent to any server of ours (there is no server).
 
 import { CATEGORIES } from "./data.js";
+import { BUILTIN_GEMINI_KEY } from "./config.js";
 
 const MODEL = "gemini-2.0-flash"; // free tier, fast
 const KEY_STORE = "tariffwise_gemini_key";
@@ -15,8 +16,10 @@ export function saveApiKey(key) {
   else localStorage.removeItem(KEY_STORE);
 }
 
+// Prefer a key the user saved in their own browser; otherwise fall back to the
+// built-in demo key so AI works out of the box (see config.js security notes).
 export function getApiKey() {
-  return localStorage.getItem(KEY_STORE) || "";
+  return localStorage.getItem(KEY_STORE) || BUILTIN_GEMINI_KEY || "";
 }
 
 /**
