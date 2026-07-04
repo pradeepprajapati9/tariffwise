@@ -37,6 +37,13 @@ function init() {
   } else {
     document.querySelector(".keybox").style.display = "none";
   }
+
+  // Show a worked example on load so visitors instantly see what the tool does
+  // instead of a blank form (the #1 reason first-time users bounce).
+  $("productDesc").value = "cotton t-shirt";
+  $("value").value = "20";
+  $("category").value = "clothing_knit";
+  runCalc({ example: true });
 }
 
 function onSaveKey() {
@@ -82,6 +89,12 @@ async function onAiSuggest() {
 
 function onCalculate(e) {
   e.preventDefault();
+  runCalc({ example: false });
+}
+
+// Reads the form, calculates, and renders. Shared by the submit handler and the
+// on-load example.
+function runCalc({ example }) {
   const value = parseFloat($("value").value);
   if (!value || value <= 0) {
     flash($("aiStatus"), "Enter a valid product value in USD.", true);
@@ -96,45 +109,75 @@ function onCalculate(e) {
     marginPct: parseFloat($("margin").value) || 25,
   });
 
-  renderResult(r);
+  renderResult(r, example);
 }
 
 function pct(n) {
   return (n * 100).toFixed(1) + "%";
 }
 
-function renderResult(r) {
+function renderResult(r, isExample = false) {
   const box = $("result");
-  const notice =
+
+  // Plain-language shock line — the strongest hook for a first-time seller.
+  const shock =
     r.savingsLostVsOldRule > 0
-      ? `<div class="alert">Before 29 August 2025, this shipment qualified for
-         duty-free entry under the $800 de minimis exemption. That exemption has
-         ended, so an estimated <strong>${money(r.savingsLostVsOldRule)}</strong>
-         in duty and fees now applies.</div>`
+      ? `<div class="alert">💥 This used to be <strong>free</strong> to ship to the US.
+         Since the $800 de-minimis rule ended (29 Aug 2025), it now costs you about
+         <strong>${money(r.savingsLostVsOldRule)}</strong> in duty &amp; fees.</div>`
       : "";
 
+  const exampleTag = isExample
+    ? `<p class="example-tag">👋 Example shown — change the values above for your own product.</p>`
+    : "";
+
   box.innerHTML = `
-    ${notice}
-    <div class="result-card">
+    ${exampleTag}
+    ${shock}
+
+    <div class="result-hero">
+      <div class="hero-num">
+        <span class="hero-num-label">Total cost to land in the US</span>
+        <span class="hero-num-value">${money(r.landedCost)}</span>
+        <span class="hero-num-sub">your ${money(r.productValue)} product + duty &amp; fees</span>
+      </div>
+      <div class="hero-num accent">
+        <span class="hero-num-label">Charge at least</span>
+        <span class="hero-num-value">${money(r.suggestedPrice)}</span>
+        <span class="hero-num-sub">to keep a ${r.marginPct}% profit</span>
+      </div>
+    </div>
+
+    <!-- Money slot: helps the seller act on the result AND earns affiliate income -->
+    <a class="cta-card" href="#" data-affiliate="shipping" target="_blank" rel="noopener nofollow">
+      <span class="cta-icon">🚚</span>
+      <span class="cta-text">
+        <strong>Pay less on US shipping &amp; customs</strong>
+        <span>Compare discounted couriers and customs brokers →</span>
+      </span>
+    </a>
+
+    <details class="result-card breakdown-box">
+      <summary>See how this is calculated</summary>
       <table class="breakdown">
         <tr><td>Product value</td><td>${money(r.productValue)}</td></tr>
-        <tr><td>HTS code</td><td>${r.htsCode}</td></tr>
-        <tr><td>Category</td><td>${r.category}</td></tr>
+        <tr><td>Category (HTS ${r.htsCode})</td><td>${r.category}</td></tr>
         <tr><td>Country of origin</td><td>${r.country}</td></tr>
         <tr class="sub"><td>Base duty (category)</td><td>${pct(r.baseDutyRate)}</td></tr>
         <tr class="sub"><td>Country tariff</td><td>${pct(r.countryExtraRate)}</td></tr>
-        <tr><td>Total duty (${pct(r.totalDutyRate)})</td><td>${money(r.duty)}</td></tr>
-        <tr><td>Merchandise Processing Fee (MPF)</td><td>${money(r.mpf)}</td></tr>
-        ${r.hmf > 0 ? `<tr><td>Harbor Maintenance Fee (HMF)</td><td>${money(r.hmf)}</td></tr>` : ""}
+        <tr><td>Import duty (${pct(r.totalDutyRate)})</td><td>${money(r.duty)}</td></tr>
+        <tr><td>Customs processing fee (MPF)</td><td>${money(r.mpf)}</td></tr>
+        ${r.hmf > 0 ? `<tr><td>Harbor fee (HMF, sea freight)</td><td>${money(r.hmf)}</td></tr>` : ""}
         <tr class="total"><td>Total landed cost</td><td>${money(r.landedCost)}</td></tr>
-        <tr class="price"><td>Recommended price (+${r.marginPct}% margin)</td><td>${money(r.suggestedPrice)}</td></tr>
+        <tr class="price"><td>Suggested price (+${r.marginPct}%)</td><td>${money(r.suggestedPrice)}</td></tr>
       </table>
       <p class="note">${r.countryNote}</p>
-    </div>
+    </details>
+
     <p class="disclaimer">Estimate only — not customs or legal advice. Actual duty
     depends on the exact HTS code and current trade rules.</p>
   `;
-  box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (!isExample) box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 // Small helper to show a status message

@@ -232,6 +232,67 @@ input:focus, select:focus {
 }
 .disclaimer { color: var(--muted); font-size: .78rem; text-align: center; margin: 1.1rem 0 0; }
 
+/* ===== Result hero (two big numbers — the first thing a user sees) ===== */
+.example-tag {
+  text-align: center;
+  font-size: .85rem;
+  color: var(--muted);
+  margin: 0 0 .9rem;
+}
+.result-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+@media (max-width: 520px) { .result-hero { grid-template-columns: 1fr; } }
+.hero-num {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.25rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+.hero-num.accent { border-color: color-mix(in srgb, var(--success) 45%, transparent); }
+.hero-num-label { font-size: .82rem; color: var(--muted); font-weight: 600; }
+.hero-num-value { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.hero-num.accent .hero-num-value { color: var(--success); }
+.hero-num-sub { font-size: .78rem; color: var(--muted); }
+
+/* ===== Money slot (affiliate CTA) ===== */
+.cta-card {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  text-decoration: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  margin-bottom: 1.1rem;
+  transition: border-color .15s, transform .1s;
+}
+.cta-card:hover { border-color: var(--primary); transform: translateY(-1px); }
+.cta-icon { font-size: 1.6rem; }
+.cta-text { display: flex; flex-direction: column; gap: .15rem; }
+.cta-text strong { color: var(--text); font-size: .98rem; }
+.cta-text span { color: var(--muted); font-size: .84rem; }
+
+/* Breakdown collapsed by default — keeps jargon out of the way */
+.breakdown-box summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: .92rem;
+  list-style: none;
+}
+.breakdown-box summary::-webkit-details-marker { display: none; }
+.breakdown-box summary::before { content: "▸ "; color: var(--muted); }
+.breakdown-box[open] summary::before { content: "▾ "; }
+.breakdown-box[open] summary { margin-bottom: .75rem; }
+
 /* ===== Key box ===== */
 .keybox summary {
   cursor: pointer;
