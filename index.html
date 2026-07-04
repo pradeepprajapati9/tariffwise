@@ -45,12 +45,12 @@
       <div class="field">
         <label for="productDesc">
           What is the product?
-          <span class="hint">Used for AI HTS-code suggestion</span>
+          <span class="hint">Type it and we detect the category automatically — no setup needed</span>
         </label>
         <div class="row">
           <input type="text" id="productDesc"
                  placeholder="e.g. cotton t-shirt, silver ring, ceramic mug" />
-          <button type="button" id="aiBtn" class="btn ghost">🤖 AI suggest</button>
+          <button type="button" id="aiBtn" class="btn ghost">Auto-detect</button>
         </div>
         <div id="aiStatus" class="status"></div>
       </div>
@@ -87,9 +87,10 @@
 
     <!-- ===== Optional Gemini key ===== -->
     <details class="card keybox">
-      <summary>🔑 Optional: add a free Gemini API key for AI classification</summary>
+      <summary>🔑 Advanced (optional): use AI for smarter matching</summary>
       <p class="small">
-        Get a free key from
+        Auto-detect already works without any setup. This is only for power users
+        who want AI-refined classification: add your own free Gemini key from
         <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.
         Your key is stored only in this browser — it is never sent to our servers
         (there is no server).

@@ -3,6 +3,7 @@
 import { CATEGORIES, COUNTRY_EXTRA, SHIP_MODES } from "./data.js";
 import { calculateLandedCost, money } from "./calc.js";
 import { suggestCategory, saveApiKey, getApiKey } from "./gemini.js";
+import { matchCategory } from "./matcher.js";
 import { AI_ENABLED } from "./config.js";
 
 // --- Populate dropdowns from data.js (single source of truth) ---
@@ -26,14 +27,14 @@ function init() {
 
   $("calcForm").addEventListener("submit", onCalculate);
 
+  // Auto-detect always works via the local matcher — no key required.
+  $("aiBtn").addEventListener("click", onAiSuggest);
+
+  // The optional Gemini key box is only for users who want AI-refined matching.
   if (AI_ENABLED) {
-    $("aiBtn").addEventListener("click", onAiSuggest);
     $("saveKeyBtn").addEventListener("click", onSaveKey);
-    // Show the user's own saved key (not the built-in demo key)
     $("apiKey").value = localStorage.getItem("tariffwise_gemini_key") || "";
   } else {
-    // AI disabled: hide the AI button and the optional key box entirely
-    $("aiBtn").style.display = "none";
     document.querySelector(".keybox").style.display = "none";
   }
 }
@@ -49,27 +50,33 @@ async function onAiSuggest() {
     flash($("aiStatus"), "Enter a product name or description first.", true);
     return;
   }
-  if (!getApiKey()) {
-    flash($("aiStatus"), "Add your free Gemini API key below to use AI classification.", true);
-    return;
-  }
-  $("aiBtn").disabled = true;
-  flash($("aiStatus"), "Classifying product…");
-  try {
-    const s = await suggestCategory(desc);
-    $("category").value = s.categoryKey;
-    flash(
-      $("aiStatus"),
-      `Suggested: ${CATEGORIES[s.categoryKey].label} — HTS ${s.hts} (${s.reason})`
-    );
-  } catch (e) {
-    const msg =
-      e.message === "no-key"
-        ? "No Gemini API key found."
-        : "AI classification failed: " + e.message;
-    flash($("aiStatus"), msg, true);
-  } finally {
-    $("aiBtn").disabled = false;
+
+  // 1) Instant local match — always works, no key, no server.
+  const local = matchCategory(desc);
+  $("category").value = local.categoryKey;
+  flash(
+    $("aiStatus"),
+    `Detected: ${CATEGORIES[local.categoryKey].label} (${local.reason})`
+  );
+
+  // 2) If the user provided their own Gemini key, optionally refine. Any
+  //    failure is silent — the local result already stands.
+  if (AI_ENABLED && getApiKey()) {
+    $("aiBtn").disabled = true;
+    try {
+      const s = await suggestCategory(desc);
+      if (CATEGORIES[s.categoryKey]) {
+        $("category").value = s.categoryKey;
+        flash(
+          $("aiStatus"),
+          `AI-refined: ${CATEGORIES[s.categoryKey].label} — HTS ${s.hts} (${s.reason})`
+        );
+      }
+    } catch {
+      /* keep the local result */
+    } finally {
+      $("aiBtn").disabled = false;
+    }
   }
 }
 

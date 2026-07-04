@@ -11,7 +11,8 @@ On **29 August 2025**, the US ended the **$800 de minimis exemption**. Previousl
 ## Features
 
 - Enter product value, category, and country of origin to instantly see duty, customs fees, total landed cost, and a suggested price.
-- Optional AI classification: add a free Gemini API key to auto-suggest the HTS code from a product description.
+- Automatic category detection from a product description — built in, no key or setup required.
+- Optional AI-refined classification for power users who add their own free Gemini key.
 - No login or account connection required — open and use.
 - All calculation constants live in a single file (`js/data.js`) for easy updates.
 
